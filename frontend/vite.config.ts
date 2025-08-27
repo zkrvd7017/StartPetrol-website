@@ -9,12 +9,9 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     proxy: {
-      "/api": {
-        target: "http://localhost:8000",
-        changeOrigin: true,
-      },
+    
       "/ws": {
-        target: "ws://localhost:8000",
+        target: "ws://localhost:8001",
         changeOrigin: true,
         ws: true,
       },

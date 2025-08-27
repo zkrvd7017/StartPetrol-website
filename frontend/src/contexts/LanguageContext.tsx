@@ -19,7 +19,7 @@ const translations = {
     socialLogin: "Ijtimoiy tarmoqlar orqali kirish:",
     location: "Joylashuvimiz",
     heroTitleLine1: "Premium",
-    heroTitleLine2: "Yoqilg'i Yechimlari",
+    heroTitleLine2: "Yoqilg'i Shaxobchasi",
     heroDescription: "StartPetrol - zamonaviy neft mahsulotlari va yoqilg'i bozorida ishonchli hamkoringiz. Sifat, xavfsizlik va professional xizmat.",
     ctaCatalog: "Katalogni Ko'rish",
     ctaAbout: "Biz Haqimizda",

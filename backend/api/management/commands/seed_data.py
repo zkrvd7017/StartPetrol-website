@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
-from api.models import Product, Review
+from api.models import Product, Review, Station, FuelPrice
 
 
 class Command(BaseCommand):
-	help = "Seed initial products and sample reviews"
+	help = "Seed initial products, stations, and sample reviews/prices"
 
 	def handle(self, *args, **options):
 		data = [
@@ -62,3 +62,49 @@ class Command(BaseCommand):
 			Review.objects.create(product=first, name="Akmal Karimov", rating=5, comment="Benzin sifati juda yaxshi, avtomobilim yaxshi ishlaydi. Yetkazib berish ham tez.")
 			Review.objects.create(product=first, name="Nodira Azimova", rating=4, comment="Dizel sifati yaxshi, lekin narx biroz qimmat.")
 			self.stdout.write(self.style.SUCCESS("Added sample reviews."))
+
+		# Stations
+		stations_data = [
+			{
+				"name": "StartPetrol - Amir Temur",
+				"address": "Amir Temur ko'chasi, 108, Toshkent",
+				"latitude": 41.311081,
+				"longitude": 69.240562,
+				"phone": "+998711234567",
+				"hours": "24/7",
+			},
+			{
+				"name": "StartPetrol - Chilonzor",
+				"address": "Chilonzor 10-mavze, Toshkent",
+				"latitude": 41.275620,
+				"longitude": 69.204915,
+				"phone": "+998711112233",
+				"hours": "06:00-23:00",
+			},
+			{
+				"name": "StartPetrol - Sergeli",
+				"address": "Sergeli 5, Toshkent",
+				"latitude": 41.247500,
+				"longitude": 69.212700,
+				"phone": "+998711998877",
+				"hours": "24/7",
+			},
+		]
+
+		for s in stations_data:
+			Station.objects.get_or_create(name=s["name"], defaults=s)
+
+		self.stdout.write(self.style.SUCCESS("Stations ensured."))
+
+		# Prices: simple defaults
+		product_map = {p.type: p for p in Product.objects.all()}
+		for st in Station.objects.all():
+			for ptype, price_val in (("benzin", 10500), ("dizel", 11500)):
+				product = product_map.get(ptype)
+				if product:
+					FuelPrice.objects.update_or_create(
+						station=st, product=product,
+						defaults={"price": price_val, "available": True},
+					)
+
+		self.stdout.write(self.style.SUCCESS("Fuel prices ensured."))

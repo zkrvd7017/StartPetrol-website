@@ -1,18 +1,14 @@
-# ...existing code...
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
-from .models import Product, Review, WebChatSession, WebChatMessage
-from .serializers import ProductSerializer, ReviewSerializer, WebChatSessionSerializer, WebChatMessageSerializer
+from .models import Product, Review, WebChatSession, WebChatMessage, Station, FuelPrice
+from .serializers import ProductSerializer, ReviewSerializer, WebChatSessionSerializer, WebChatMessageSerializer, StationSerializer, FuelPriceSerializer
 from .chat_logic import get_chat_reply
-from channels.layers import get_channel_layer
 import os
-# ...existing code...
-# (remove the duplicate plain `webchat_send` function that only printed the message)
-# ...existing code...
+
 try:
 	from openai import OpenAI  # type: ignore
 except Exception:  # pragma: no cover
@@ -42,6 +38,18 @@ class ProductViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
 	queryset = Review.objects.all()
 	serializer_class = ReviewSerializer
+	permission_classes = [AllowAny]
+
+
+class StationViewSet(viewsets.ReadOnlyModelViewSet):
+	queryset = Station.objects.all()
+	serializer_class = StationSerializer
+	permission_classes = [AllowAny]
+
+
+class FuelPriceViewSet(viewsets.ReadOnlyModelViewSet):
+	queryset = FuelPrice.objects.select_related("station", "product").all()
+	serializer_class = FuelPriceSerializer
 	permission_classes = [AllowAny]
 
 
@@ -119,7 +127,7 @@ def send_question(request):
 			session = WebChatSession.objects.get(id=session_id)
 			if user_id and not session.user_id:
 				session.user_id = user_id
-				session.save(update_fields=["user_id"]) 
+				session.save(update_fields=["user_id"])
 		except WebChatSession.DoesNotExist:
 			session = WebChatSession.objects.create(user_id=user_id)
 	else:
@@ -131,9 +139,6 @@ def send_question(request):
 	_send_to_admin_via_telegram(prefix + content)
 	return Response({"session_id": str(session.id), "status": "sent"})
 
-def webchat_send(request, session_id: str):
-    content = str(request.data.get("content") or "").strip()
-    print(f"Foydalanuvchi xabari: {content}")
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -142,20 +147,27 @@ def receive_answer(request):
 	if settings.WEBCHAT_API_KEY and api_key != settings.WEBCHAT_API_KEY:
 		return Response({"detail": "Unauthorized"}, status=401)
 	session_id = request.data.get("session_id")
+	user_id = request.data.get("user_id")
 	content = str(request.data.get("content") or "").strip()
-	if not (session_id and content):
+	if not content:
 		return Response({"detail": "Invalid"}, status=400)
 	try:
-		session = WebChatSession.objects.get(id=session_id)
+		if session_id:
+			session = WebChatSession.objects.get(id=session_id)
+		elif user_id:
+			session = WebChatSession.objects.filter(user_id=str(user_id)).order_by("-created_at").first()  # type: ignore
+			if session is None:
+				return Response({"detail": "Session not found"}, status=404)
+		else:
+			return Response({"detail": "Invalid"}, status=400)
 	except WebChatSession.DoesNotExist:
 		return Response({"detail": "Session not found"}, status=404)
 	m = WebChatMessage.objects.create(session=session, role="admin", content=content)
 	try:
 		from asgiref.sync import async_to_sync
-		from channels.layers import get_channel_layer 
-		webchat_send(request, session_id)
+		from channels.layers import get_channel_layer
 		channel_layer = get_channel_layer()
-		async_to_sync(channel_layer.group_send)(f"webchat_{session_id}", {"type": "chat_message", "role": "admin", "content": m.content, "created_at": m.created_at.isoformat()})
+		async_to_sync(channel_layer.group_send)(f"webchat_{session.id}", {"type": "chat_message", "role": "admin", "content": m.content, "created_at": m.created_at.isoformat()})
 	except Exception:
 		pass
 	return Response({"status": "ok"})

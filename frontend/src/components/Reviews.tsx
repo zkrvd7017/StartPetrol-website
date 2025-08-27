@@ -32,7 +32,7 @@ const Reviews = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   const fetchReviews = async (signal?: AbortSignal) => {
-    const res = await fetch('/api/reviews/', { signal });
+    const res = await fetch('http://127.0.0.1:8001/api/reviews/', { signal });
     if (!res.ok) return;
     const data = await res.json();
     if (!Array.isArray(data)) return;
@@ -48,7 +48,7 @@ const Reviews = () => {
   };
 
   const fetchProducts = async (signal?: AbortSignal) => {
-    const res = await fetch('/api/products/', { signal });
+    const res = await fetch('http://127.0.0.1:8001/api/products/', { signal });
     if (!res.ok) return;
     const data = await res.json();
     if (!Array.isArray(data)) return;
@@ -74,7 +74,7 @@ const Reviews = () => {
 
     try {
       const payload: any = { name: newReview.name, rating: newReview.rating, comment: newReview.comment, product: Number(newReview.productId) };
-      const res = await fetch('/api/reviews/', {
+      const res = await fetch('http://127.0.0.1:8001/api/reviews/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

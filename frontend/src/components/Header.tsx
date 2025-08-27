@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Search, Globe, User, Heart, Instagram, Send } from 'lucide-react';
+import { Menu, Search, Globe, Heart, Instagram, Send } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
@@ -64,7 +64,7 @@ const Header = () => {
               className={`transition-colors hover:text-primary relative ${
                 item.active 
                   ? 'text-primary' 
-                  : 'text-muted-foreground'
+                  : 'text-foreground'
               }`}
             >
               {item.name}
@@ -134,13 +134,11 @@ const Header = () => {
             </div>
           </div>
 
-          {/* User Actions */}
+          {/* User Actions (login removed) */}
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="hidden sm:flex">
               <Heart className="h-4 w-4" />
             </Button>
-            
-            {/* Social Login Buttons */}
             <Button 
               variant="ghost" 
               size="sm" 
@@ -149,19 +147,13 @@ const Header = () => {
             >
               <Instagram className="h-4 w-4" />
             </Button>
-            
             <Button 
               variant="ghost" 
               size="sm" 
               className="hidden md:flex text-blue-500 hover:text-blue-600 hover:bg-blue-50"
-              onClick={() => window.open('#', '_blank')}
+              onClick={() => window.open('https://t.me/StartPetrol_bot', '_blank')}
             >
               <Send className="h-4 w-4" />
-            </Button>
-            
-            <Button variant="default" size="sm" className="btn-glow">
-              <User className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">{t('login')}</span>
             </Button>
           </div>
 
@@ -187,15 +179,14 @@ const Header = () => {
                       key={item.name}
                       href={item.href}
                       className={`px-2 py-1 text-lg transition-colors hover:text-primary ${
-                        item.active ? 'text-primary' : 'text-muted-foreground'
+                        item.active ? 'text-primary' : 'text-foreground'
                       }`}
                     >
                       {item.name}
                     </a>
                   ))}
                 </nav>
-                
-                {/* Mobile Social Login */}
+                {/* Mobile Social */}
                 <div className="mt-6 pt-6 border-t border-border">
                   <p className="text-sm font-medium text-muted-foreground mb-3">{t('socialLogin')}</p>
                   <div className="flex gap-3">
@@ -208,15 +199,10 @@ const Header = () => {
                       <Instagram className="h-4 w-4 mr-2" />
                       Instagram
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex-1 text-blue-500 border-blue-200 hover:bg-blue-50"
-                      onClick={() => window.open('#', '_blank')}
-                    >
-                      <Send className="h-4 w-4 mr-2" />
+                    <a href="https://t.me/StartPetrol_bot" target="_blank" className='border border'>
+                      <Send className="h-4 w-4 mr-2"  />
                       Telegram
-                    </Button>
+                    </a>
                   </div>
                 </div>
               </div>

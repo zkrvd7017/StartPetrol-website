@@ -6,7 +6,6 @@ import Reviews from '@/components/Reviews';
 import LocationMap from '@/components/LocationMap';
 import Footer from '@/components/Footer';
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import ChatWidget from '@/components/ChatWidget';
 
 const Index = () => {
   return (
@@ -19,7 +18,6 @@ const Index = () => {
         <Reviews />
         <LocationMap />
         <Footer />
-        <ChatWidget />
       </div>
     </LanguageProvider>
   );

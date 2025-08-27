@@ -10,15 +10,29 @@ interface ChatMessage {
   created_at?: string;
 }
 
+const getOrCreateUserId = (): string => {
+  try {
+    const key = 'sp_user_id';
+    const existing = localStorage.getItem(key);
+    if (existing) return existing;
+    const uid = (self.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    localStorage.setItem(key, uid);
+    return uid;
+  } catch {
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+};
+
 const ChatWidget = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'admin', content: 'Assalomu alaykum! Savolingizni yozing. (Bu chat Telegram bot orqali ishlaydi)' }
+    { role: 'admin', content: "Salom! Savollaringizni yozing: narx, yetkazib berish, mahsulotlar va hokazo." }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [since, setSince] = useState<string | null>(null);
+  const [userId] = useState<string>(() => getOrCreateUserId());
   const endRef = useRef<HTMLDivElement | null>(null);
   const pollTimer = useRef<number | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -26,19 +40,6 @@ const ChatWidget = () => {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, open]);
-
-  // Create a session when chat opens first time
-  useEffect(() => {
-    if (!open || sessionId) return;
-    (async () => {
-      try {
-        const res = await fetch('/api/webchat/session/', { method: 'POST' });
-        if (!res.ok) return;
-        const data = await res.json();
-        setSessionId(data.id);
-      } catch { }
-    })();
-  }, [open, sessionId]);
 
   // WebSocket connect on session
   useEffect(() => {
@@ -53,7 +54,7 @@ const ChatWidget = () => {
           setMessages((prev: ChatMessage[]) => ([...prev, { role: 'admin', content: String(data.content), created_at: data.created_at }]));
           if (data.created_at) setSince(data.created_at);
         }
-      } catch { }
+      } catch {}
     };
     ws.onclose = () => { wsRef.current = null; };
     return () => { ws.close(); };
@@ -80,9 +81,8 @@ const ChatWidget = () => {
           const last = data[data.length - 1];
           if (last?.created_at) setSince(last.created_at);
         }
-      } catch { }
+      } catch {}
     };
-    // Only poll if no WS
     if (!wsRef.current) {
       poll();
       pollTimer.current = window.setInterval(poll, 2000);
@@ -92,16 +92,20 @@ const ChatWidget = () => {
 
   const sendMessage = async () => {
     const text = input.trim();
-    if (!text || loading || !sessionId) return;
+    if (!text || loading) return;
     setMessages(prev => [...prev, { role: 'user', content: text }]);
     setInput('');
     setLoading(true);
     try {
-      await fetch(`/api/webchat/${sessionId}/send/`, {
+      const res = await fetch('/api/send-question', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: text }),
+        body: JSON.stringify({ content: text, user_id: userId, session_id: sessionId || undefined }),
       });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.session_id && !sessionId) setSessionId(String(data.session_id));
+      }
     } catch {
       setMessages(prev => [...prev, { role: 'admin', content: 'Ulanishda xatolik. Keyinroq urinib ko‘ring.' }]);
     } finally {
@@ -148,7 +152,7 @@ const ChatWidget = () => {
                 onKeyDown={(e) => { if (e.key === 'Enter') sendMessage(); }}
                 placeholder="Savolingizni yozing..."
               />
-              <Button onClick={sendMessage} disabled={loading || !sessionId} className="btn-glow">
+              <Button onClick={sendMessage} disabled={loading} className="btn-glow">
                 <Send className="h-4 w-4" />
               </Button>
             </div>

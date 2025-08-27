@@ -28,6 +28,12 @@ const Hero = () => {
     }
   ];
 
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    else window.location.hash = `#${id}`;
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -56,14 +62,15 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="btn-glow bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold shadow-xl"
+              onClick={() => scrollTo('catalog')}
             >
               {t('ctaCatalog')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
-              variant="outline" 
               size="lg"
-              className="border-white/40 text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold backdrop-blur-sm shadow-lg"
+              className="bg-white text-slate-900 hover:bg-white/90 px-8 py-4 text-lg font-semibold shadow-xl"
+              onClick={() => scrollTo('about')}
             >
               {t('ctaAbout')}
             </Button>

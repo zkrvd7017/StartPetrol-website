@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Review, WebChatSession, WebChatMessage
+from .models import Product, Review, WebChatSession, WebChatMessage, Station, FuelPrice
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -59,3 +59,29 @@ class WebChatSessionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = WebChatSession
 		fields = ["id", "messages", "created_at"]
+
+
+class FuelPriceSerializer(serializers.ModelSerializer):
+	product_name = serializers.CharField(source="product.name", read_only=True)
+	product_type = serializers.CharField(source="product.type", read_only=True)
+
+	class Meta:
+		model = FuelPrice
+		fields = ["id", "product", "product_name", "product_type", "price", "available", "updated_at"]
+
+
+class StationSerializer(serializers.ModelSerializer):
+	prices = FuelPriceSerializer(many=True, read_only=True)
+
+	class Meta:
+		model = Station
+		fields = [
+			"id",
+			"name",
+			"address",
+			"latitude",
+			"longitude",
+			"phone",
+			"hours",
+			"prices",
+		]

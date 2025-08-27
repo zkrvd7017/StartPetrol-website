@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 def parse_session(text: str) -> Optional[str]:
     for line in (text or "").splitlines():
         if line.startswith("session:"):
+            
             return line.split(":", 1)[1].strip()
     return None
 

@@ -1,7 +1,11 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load .env from project root
+load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key")
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
@@ -27,6 +31,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
 	"corsheaders.middleware.CorsMiddleware",
 	"django.middleware.security.SecurityMiddleware",
+	"whitenoise.middleware.WhiteNoiseMiddleware",
 	"django.contrib.sessions.middleware.SessionMiddleware",
 	"django.middleware.common.CommonMiddleware",
 	"django.middleware.csrf.CsrfViewMiddleware",

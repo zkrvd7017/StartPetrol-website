@@ -110,29 +110,6 @@ const Services = () => {
             ))}
           </div>
         </div>
-
-        {/* Contact CTA */}
-        <div className="text-center mt-16 animate-fade-in">
-          <div className="bg-background rounded-2xl p-8 md:p-12 border border-border/50 shadow-card">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Bizning xizmatlar sizni qiziqtirdimi?
-            </h3>
-            <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              Mutaxassislarimiz bilan bog'laning va sizning ehtiyojlaringiz uchun 
-              eng yaxshi echimlarni toping.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="btn-glow bg-primary hover:bg-primary/90">
-                <Phone className="mr-2 h-5 w-5" />
-                +998 90 123 45 67
-              </Button>
-              <Button variant="outline" size="lg">
-                <MapPin className="mr-2 h-5 w-5" />
-                Joylashuvimiz
-              </Button>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

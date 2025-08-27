@@ -1,0 +1,55 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    container_name: fullstack-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings
+      PYTHONUNBUFFERED: "1"
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./backend/staticfiles:/backend/staticfiles
+      - ./backend/media:/backend/media
+      - ./backend/db.sqlite3:/backend/db.sqlite3
+    depends_on:
+      - redis
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             daphne -b 0.0.0.0 -p 8000 config.asgi:application"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
+    container_name: fullstack-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: bot
+    container_name: fullstack-bot
+    env_file:
+      - ./backend/.env
+    environment:
+      - BACKEND_BASE_URL=http://backend:8000
+    depends_on:
+      - backend
+    command: ["sh", "-c", "python bot.py"]
+
+  redis:
+    image: redis:7-alpine
+    container_name: fullstack-redis
+    ports:
+      - "6379:6379"
