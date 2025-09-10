@@ -150,36 +150,40 @@ const ProductCatalog = () => {
   };
 
   return (
-    <section id="catalog" className="py-24 bg-gradient-to-b from-background to-muted/30">
+    <section id="catalog" className="py-12 sm:py-16 lg:py-24 bg-gradient-to-b from-background to-muted/30">
       <div className="container px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center space-y-4 mb-16 animate-fade-in">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        <div className="text-center space-y-2 sm:space-y-4 mb-8 sm:mb-12 lg:mb-16 animate-fade-in">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             {t('productsTitle')}
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
             {t('productsSubtitle')}
           </p>
         </div>
 
         {/* Product Tabs */}
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-4 mb-12">
-            <TabsTrigger value="all" className="flex items-center gap-2">
-              <Fuel className="h-4 w-4" />
-              {t('allTab')}
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-4 mb-8 sm:mb-12 h-10 sm:h-12">
+            <TabsTrigger value="all" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Fuel className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">{t('allTab')}</span>
+              <span className="sm:hidden">Barcha</span>
             </TabsTrigger>
-            <TabsTrigger value="benzin" className="flex items-center gap-2">
-              <Fuel className="h-4 w-4" />
-              {t('gasolineTab')}
+            <TabsTrigger value="benzin" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Fuel className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">{t('gasolineTab')}</span>
+              <span className="sm:hidden">Benzin</span>
             </TabsTrigger>
-            <TabsTrigger value="dizel" className="flex items-center gap-2">
-              <Droplets className="h-4 w-4" />
-              {t('dieselTab')}
+            <TabsTrigger value="dizel" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Droplets className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">{t('dieselTab')}</span>
+              <span className="sm:hidden">Dizel</span>
             </TabsTrigger>
-            <TabsTrigger value="neft" className="flex items-center gap-2">
-              <Zap className="h-4 w-4" />
-              {t('oilTab')}
+            <TabsTrigger value="neft" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">{t('oilTab')}</span>
+              <span className="sm:hidden">Neft</span>
             </TabsTrigger>
           </TabsList>
 
@@ -209,11 +213,11 @@ const ProductCatalog = () => {
 
 const ProductGrid = ({ products, favorites, toggleFavorite, getTypeIcon, getQualityColor }: any) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
       {products.map((product: any, index: number) => (
         <Card 
           key={product.id} 
-          className="product-card group overflow-hidden border-0 shadow-card bg-gradient-card animate-scale-in"
+          className="product-card group overflow-hidden border-0 shadow-card bg-gradient-card animate-scale-in h-full"
           style={{ animationDelay: `${index * 0.1}s` }}
         >
           <CardHeader className="p-0">
@@ -221,7 +225,7 @@ const ProductGrid = ({ products, favorites, toggleFavorite, getTypeIcon, getQual
               <img 
                 src={product.image} 
                 alt={product.name}
-                className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-32 sm:h-40 lg:h-48 object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               
@@ -229,11 +233,11 @@ const ProductGrid = ({ products, favorites, toggleFavorite, getTypeIcon, getQual
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30"
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30"
                 onClick={() => toggleFavorite(product.id)}
               >
                 <Heart 
-                  className={`h-4 w-4 transition-all duration-300 ${
+                  className={`h-3 w-3 sm:h-4 sm:w-4 transition-all duration-300 ${
                     favorites.has(product.id) 
                       ? 'fill-red-500 text-red-500 animate-pulse' 
                       : 'text-white hover:text-red-300'
@@ -242,60 +246,62 @@ const ProductGrid = ({ products, favorites, toggleFavorite, getTypeIcon, getQual
               </Button>
 
               {/* Quality Badge */}
-              <div className="absolute top-4 left-4">
-                <Badge className={`${getQualityColor(product.quality)} text-white border-0`}>
+              <div className="absolute top-2 left-2 sm:top-4 sm:left-4">
+                <Badge className={`${getQualityColor(product.quality)} text-white border-0 text-xs sm:text-sm px-2 py-1`}>
                   {product.quality}
                 </Badge>
               </div>
 
               {/* Rating */}
-              <div className="absolute bottom-4 left-4 flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                <span className="text-white text-sm font-medium">{product.rating}</span>
+              <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2 py-1 sm:px-3">
+                <Star className="h-2 w-2 sm:h-3 sm:w-3 fill-yellow-400 text-yellow-400" />
+                <span className="text-white text-xs sm:text-sm font-medium">{product.rating}</span>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className="p-6">
-            <div className="space-y-4">
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="space-y-2 sm:space-y-4">
               {/* Product Header */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  {getTypeIcon(product.type)}
-                  <CardTitle className="text-xl font-semibold text-foreground">
+              <div className="space-y-1 sm:space-y-2">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <div className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5">
+                    {getTypeIcon(product.type)}
+                  </div>
+                  <CardTitle className="text-sm sm:text-base lg:text-xl font-semibold text-foreground leading-tight">
                     {product.name}
                   </CardTitle>
                 </div>
-                <CardDescription className="text-muted-foreground">
+                <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-tight">
                   {product.description}
                 </CardDescription>
               </div>
 
               {/* Features */}
-              <div className="space-y-2">
+              <div className="space-y-1 sm:space-y-2">
                 {(product.features || []).slice(0, 2).map((feature: string, idx: number) => (
-                  <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <CheckCircle className="h-3 w-3 text-secondary" />
+                  <div key={idx} className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+                    <CheckCircle className="h-2 w-2 sm:h-3 sm:w-3 text-secondary" />
                     {feature}
                   </div>
                 ))}
               </div>
 
               {/* Info Grid */}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4 pt-2 sm:pt-4 border-t border-border/50">
                 <div className="text-center">
                   <div className="flex items-center justify-center mb-1">
-                    <Truck className="h-4 w-4 text-muted-foreground" />
+                    <Truck className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
                   </div>
                   <div className="text-xs text-muted-foreground">Yetkazish</div>
-                  <div className="text-sm font-medium">{product.delivery}</div>
+                  <div className="text-xs sm:text-sm font-medium leading-tight">{product.delivery}</div>
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center mb-1">
-                    <Droplets className="h-4 w-4 text-muted-foreground" />
+                    <Droplets className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
                   </div>
                   <div className="text-xs text-muted-foreground">Hajm</div>
-                  <div className="text-sm font-medium">{product.volume}</div>
+                  <div className="text-xs sm:text-sm font-medium leading-tight">{product.volume}</div>
                 </div>
               </div>
 

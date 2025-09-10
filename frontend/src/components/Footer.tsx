@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Mail, Phone, MapPin, Globe, Facebook, Instagram, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe, Instagram, Send } from 'lucide-react';
 
 const Footer = () => {
   const footerSections = [
@@ -43,9 +43,8 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
+    { icon: Instagram, href: 'https://www.instagram.com/1.diyor____/', label: 'Instagram' },
+    { icon: Send, href: 'https://t.me/StartPetrol_bot', label: 'Telegram' },
     { icon: Globe, href: '#', label: 'Website' }
   ];
 
@@ -72,15 +71,19 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary-foreground/60" />
-                <span className="text-primary-foreground/80">+998 90 123 45 67</span>
+                <a href="tel:+998881007017" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                  +998 881007017
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-primary-foreground/60" />
-                <span className="text-primary-foreground/80">info@startpetrol.uz</span>
+                <a href="mailto:zdiyor74@gmail.com" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                  zdiyor74@gmail.com
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-primary-foreground/60" />
-                <span className="text-primary-foreground/80">Toshkent, O'zbekiston</span>
+                <span className="text-primary-foreground/80">Qarshi, UZBEKISTON</span>
               </div>
             </div>
 
@@ -94,7 +97,7 @@ const Footer = () => {
                   className="h-10 w-10 p-0 text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10"
                   asChild
                 >
-                  <a href={social.href} aria-label={social.label}>
+                  <a href={social.href} target="_blank" rel="noopener noreferrer" aria-label={social.label}>
                     <social.icon className="h-5 w-5" />
                   </a>
                 </Button>

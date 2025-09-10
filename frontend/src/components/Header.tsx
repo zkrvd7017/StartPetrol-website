@@ -143,7 +143,7 @@ const Header = () => {
               variant="ghost" 
               size="sm" 
               className="hidden md:flex text-pink-500 hover:text-pink-600 hover:bg-pink-50"
-              onClick={() => window.open('#', '_blank')}
+              onClick={() => window.open('https://www.instagram.com/1.diyor____/', '_blank')}
             >
               <Instagram className="h-4 w-4" />
             </Button>
@@ -158,14 +158,14 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu */}
-          <Sheet>
+          <Sheet >
             <SheetTrigger asChild>
               <Button variant="ghost" className="px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="pr-0">
+            <SheetContent side="left" className="pr-0 z-[100]">
               <div className="px-7">
                 <a href="#" className="flex items-center space-x-2">
                   <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
@@ -186,23 +186,29 @@ const Header = () => {
                     </a>
                   ))}
                 </nav>
+                
                 {/* Mobile Social */}
-                <div className="mt-6 pt-6 border-t border-border">
-                  <p className="text-sm font-medium text-muted-foreground mb-3">{t('socialLogin')}</p>
-                  <div className="flex gap-3">
+                <div className="mt-8 pt-6 border-t border-border">
+                  <p className="text-sm font-medium text-muted-foreground mb-4">Ijtimoiy tarmoqlar orqali kirish:</p>
+                  <div className="flex flex-col gap-3">
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="flex-1 text-pink-500 border-pink-200 hover:bg-pink-50"
-                      onClick={() => window.open('#', '_blank')}
+                      className="w-full justify-start text-pink-500 border-pink-200 hover:bg-pink-50"
+                      onClick={() => window.open('https://www.instagram.com/1.diyor____/', '_blank')}
                     >
                       <Instagram className="h-4 w-4 mr-2" />
                       Instagram
                     </Button>
-                    <a href="https://t.me/StartPetrol_bot" target="_blank" className='border border'>
-                      <Send className="h-4 w-4 mr-2"  />
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start text-blue-500 border-blue-200 hover:bg-blue-50"
+                      onClick={() => window.open('https://t.me/StartPetrol_bot', '_blank')}
+                    >
+                      <Send className="h-4 w-4 mr-2" />
                       Telegram
-                    </a>
+                    </Button>
                   </div>
                 </div>
               </div>

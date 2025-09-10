@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Star, User, MessageCircle, Send } from 'lucide-react';
+import { Star, User, MessageCircle, Send, ArrowLeft, ChevronUp, Eye } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -20,6 +20,7 @@ const Reviews = () => {
   const { t } = useLanguage();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [products, setProducts] = useState<{ id: number; name: string }[]>([]);
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   const [newReview, setNewReview] = useState({
     name: '',
@@ -32,7 +33,7 @@ const Reviews = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   const fetchReviews = async (signal?: AbortSignal) => {
-    const res = await fetch('http://127.0.0.1:8001/api/reviews/', { signal });
+    const res = await fetch('/api/reviews/', { signal });
     if (!res.ok) return;
     const data = await res.json();
     if (!Array.isArray(data)) return;
@@ -48,7 +49,7 @@ const Reviews = () => {
   };
 
   const fetchProducts = async (signal?: AbortSignal) => {
-    const res = await fetch('http://127.0.0.1:8001/api/products/', { signal });
+    const res = await fetch('/api/products/', { signal });
     if (!res.ok) return;
     const data = await res.json();
     if (!Array.isArray(data)) return;
@@ -74,7 +75,7 @@ const Reviews = () => {
 
     try {
       const payload: any = { name: newReview.name, rating: newReview.rating, comment: newReview.comment, product: Number(newReview.productId) };
-      const res = await fetch('http://127.0.0.1:8001/api/reviews/', {
+      const res = await fetch('/api/reviews/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -121,12 +122,25 @@ const Reviews = () => {
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* Reviews List */}
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-primary" />
-              Sharh va Fikrlar
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                <MessageCircle className="h-5 w-5 text-primary" />
+                Sharh va Fikrlar
+              </h3>
+              {!showAllReviews && reviews.length > 3 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAllReviews(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Eye className="h-4 w-4" />
+                  Barcha sharhlar ({reviews.length})
+                </Button>
+              )}
+            </div>
             
-            {reviews.map((review) => (
+            {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => (
               <Card key={review.id} className="product-card">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
@@ -158,6 +172,19 @@ const Reviews = () => {
                 </CardContent>
               </Card>
             ))}
+
+            {showAllReviews && (
+              <div className="flex justify-center pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAllReviews(false)}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Orqaga qaytish
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Add Review Form */}
@@ -264,6 +291,19 @@ const Reviews = () => {
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Back to Top Button */}
+        <div className="flex justify-center mt-12">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-2 btn-glow"
+          >
+            <ChevronUp className="h-5 w-5" />
+            Yuqoriga qaytish
+          </Button>
         </div>
       </div>
     </section>
