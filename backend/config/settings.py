@@ -17,6 +17,7 @@ ALLOWED_HOSTS = [
 	"startpetrol.onrender.com",
 	"startpetrol.uz",
 	"www.startpetrol.uz",
+	"51.21.222.146"
 ]
 
 INSTALLED_APPS = [
