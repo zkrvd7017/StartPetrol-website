@@ -14,10 +14,13 @@ ALLOWED_HOSTS = [
 	"localhost",
 	"127.0.0.1",
 	"[::1]",
+	"51.21.222.146",  # Server IP manzili
 	"startpetrol.onrender.com",
 	"startpetrol.uz",
 	"www.startpetrol.uz",
-	"51.21.222.146"
+	"0.0.0.0",
+	".startpetrol.uz",  # Subdomain uchun
+	"*"  # Development uchun - production'da o'chirish kerak
 ]
 
 INSTALLED_APPS = [
