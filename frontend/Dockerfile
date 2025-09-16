@@ -1,22 +1,6 @@
-FROM node:16-alpine AS build
+Microsoft Windows [Version 10.0.26100.6584]
+(c) Microsoft Corporation. All rights reserved.
 
-WORKDIR /app
+C:\Users\volto\StartPetrol-website>
 
-RUN apk add --no-cache python3 make g++
-
-COPY package*.json ./
-
-RUN npm cache clean --force
-RUN npm install --legacy-peer-deps --no-optional
-
-COPY . .
-
-RUN npm run build
-
-FROM nginx:alpine
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+C:\Users\volto\StartPetrol-website>
