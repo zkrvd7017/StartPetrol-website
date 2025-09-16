@@ -9,4 +9,12 @@ C:\Users\volto\StartPetrol-website>[main eb7ed74] Fix frontend Dockerfile conten
 C:\Users\volto\StartPetrol-website>
 
 C:\Users\volto\StartPetrol-website>
+C:\Users\volto\StartPetrol-website>[main 7b82e6f] Update frontend Dockerfile
+ 1 file changed, 6 insertions(+)
+
+C:\Users\volto\StartPetrol-website>
+
+C:\Users\volto\StartPetrol-website>
+C:\Users\volto\StartPetrol-website>
+
 C:\Users\volto\StartPetrol-website>
