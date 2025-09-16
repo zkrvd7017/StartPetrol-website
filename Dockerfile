@@ -18,10 +18,13 @@ WORKDIR /backend
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
+    pkg-config \
+    libffi-dev \
   && rm -rf /var/lib/apt/lists/*
 COPY backend/requirements.txt /backend/requirements.txt
-RUN pip install --no-cache-dir -r /backend/requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir -r /backend/requirements.txt
 COPY backend/. /backend
+RUN python manage.py collectstatic --noinput || true
 
 ############################
 # Backend runtime target
@@ -38,8 +41,11 @@ FROM python:3.11-slim AS bot
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 WORKDIR /bot
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+  && rm -rf /var/lib/apt/lists/*
 COPY bot/requirements.txt /bot/requirements.txt
-RUN pip install --no-cache-dir -r /bot/requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir -r /bot/requirements.txt
 COPY bot/. /bot
 CMD ["python", "bot.py"]
 

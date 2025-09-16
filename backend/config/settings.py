@@ -10,18 +10,8 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key")
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = [
-	"localhost",
-	"127.0.0.1",
-	"[::1]",
-	"51.21.222.146",  # Server IP manzili
-	"0.0.0.0",  # Barcha IP'larni qabul qilish uchun
-	"startpetrol.onrender.com",
-	"startpetrol.uz",
-	"www.startpetrol.uz",
-	".startpetrol.uz",  # Subdomain uchun
-	"*"  # Barcha hostlarni qabul qilish
-]
+# ALLOWED_HOSTS - barcha hostlarni qabul qilish uchun
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
 	"django.contrib.admin",
@@ -105,7 +95,10 @@ REST_FRAMEWORK = {
 
 CHANNEL_LAYERS = {
 	"default": {
-		"BACKEND": "channels.layers.InMemoryChannelLayer",
+		"BACKEND": "channels_redis.core.RedisChannelLayer",
+		"CONFIG": {
+			"hosts": [os.environ.get("REDIS_URL", "redis://redis:6379/0")],
+		},
 	}
 }
 
