@@ -1,61 +1,39 @@
+version: '3.8'
+
 services:
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: backend
-    container_name: fullstack-backend
+    build: ./backend
+    container_name: startpetrol-backend
     restart: unless-stopped
     environment:
-      DJANGO_SETTINGS_MODULE: config.settings
-      PYTHONUNBUFFERED: "1"
-      DJANGO_SECRET_KEY: "startpetrol-super-secret-key-2025-change-this-in-production"
-      DJANGO_DEBUG: "0"
-      ALLOWED_HOSTS: "51.21.222.146,localhost,127.0.0.1,0.0.0.0,*"
-      REDIS_URL: "redis://redis:6379/0"
-      WEBCHAT_API_KEY: "your-webchat-api-key-here"
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - PYTHONUNBUFFERED=1
+      - DJANGO_DEBUG=0
+      - DJANGO_SECRET_KEY=startpetrol-super-secret-key-2025
+      - ALLOWED_HOSTS=51.21.222.146,localhost,127.0.0.1,0.0.0.0,*
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/staticfiles:/backend/staticfiles
-      - ./backend/media:/backend/media
-      - ./backend/db.sqlite3:/backend/db.sqlite3
-    depends_on:
-      - redis
+      - ./backend/staticfiles:/app/staticfiles
+      - ./backend/media:/app/media
+      - ./backend/db.sqlite3:/app/db.sqlite3
     command: >
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
              gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 120"
 
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: frontend
-    container_name: fullstack-frontend
+    build: ./frontend
+    container_name: startpetrol-frontend
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - backend
-
-  bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: bot
-    container_name: fullstack-bot
-    restart: unless-stopped
-    environment:
-      BACKEND_BASE_URL: "http://backend:8000"
-      TELEGRAM_BOT_TOKEN: "YOUR_TELEGRAM_BOT_TOKEN_HERE"
-    depends_on:
-      - backend
-    command: ["sh", "-c", "python bot.py"]
 
   redis:
     image: redis:7-alpine
-    container_name: fullstack-redis
+    container_name: startpetrol-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
