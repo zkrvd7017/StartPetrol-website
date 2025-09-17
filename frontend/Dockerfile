@@ -17,4 +17,9 @@ C:\Users\volto\StartPetrol-website>
 C:\Users\volto\StartPetrol-website>
 C:\Users\volto\StartPetrol-website>
 
+C:\Users\volto\StartPetrol-website>[main face2b3] Update Node.js version to 18 for Vite compatibility
+ 1 file changed, 8 insertions(+)
+
+C:\Users\volto\StartPetrol-website>
+
 C:\Users\volto\StartPetrol-website>
