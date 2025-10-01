@@ -9,10 +9,8 @@ services:
       - DJANGO_SETTINGS_MODULE=config.settings
       - PYTHONUNBUFFERED=1
       - DJANGO_DEBUG=0
-      - DJANGO_SECRET_KEY=startpetrol-super-secret-key-2025
-      - ALLOWED_HOSTS=51.21.222.146,localhost,127.0.0.1,0.0.0.0,*
-    ports:
-      - "8000:8000"
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ALLOWED_HOSTS=startpetrol.uz,www.startpetrol.uz,backend,localhost,127.0.0.1
     volumes:
       - ./backend/staticfiles:/app/staticfiles
       - ./backend/media:/app/media
@@ -35,8 +33,6 @@ services:
     image: redis:7-alpine
     container_name: startpetrol-redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
 

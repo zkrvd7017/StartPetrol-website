@@ -1,25 +1,22 @@
-Microsoft Windows [Version 10.0.26100.6584]
-(c) Microsoft Corporation. All rights reserved.
+FROM node:18-alpine AS build
 
-C:\Users\volto\StartPetrol-website>
+WORKDIR /app
 
-C:\Users\volto\StartPetrol-website>[main eb7ed74] Fix frontend Dockerfile content
- 1 file changed, 4 insertions(+), 20 deletions(-)
+RUN apk add --no-cache python3 make g++
 
-C:\Users\volto\StartPetrol-website>
+COPY package*.json ./
 
-C:\Users\volto\StartPetrol-website>
-C:\Users\volto\StartPetrol-website>[main 7b82e6f] Update frontend Dockerfile
- 1 file changed, 6 insertions(+)
+RUN npm cache clean --force
+RUN npm ci
 
-C:\Users\volto\StartPetrol-website>
+COPY . .
 
-C:\Users\volto\StartPetrol-website>
-C:\Users\volto\StartPetrol-website>
+RUN npm run build
 
-C:\Users\volto\StartPetrol-website>[main face2b3] Update Node.js version to 18 for Vite compatibility
- 1 file changed, 8 insertions(+)
+FROM nginx:alpine
 
-C:\Users\volto\StartPetrol-website>
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
 
-C:\Users\volto\StartPetrol-website>
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
