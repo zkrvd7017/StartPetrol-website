@@ -17,6 +17,7 @@ interface Review {
 }
 
 const Reviews = () => {
+  const API_BASE = (import.meta as any).env?.VITE_API_ORIGIN || '';
   const { t } = useLanguage();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [products, setProducts] = useState<{ id: number; name: string }[]>([]);
@@ -33,7 +34,7 @@ const Reviews = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   const fetchReviews = async (signal?: AbortSignal) => {
-    const res = await fetch('/api/reviews/', { signal });
+    const res = await fetch(`${API_BASE}/api/reviews/`, { signal });
     if (!res.ok) return;
     const data = await res.json();
     if (!Array.isArray(data)) return;
@@ -49,7 +50,7 @@ const Reviews = () => {
   };
 
   const fetchProducts = async (signal?: AbortSignal) => {
-    const res = await fetch('/api/products/', { signal });
+    const res = await fetch(`${API_BASE}/api/products/`, { signal });
     if (!res.ok) return;
     const data = await res.json();
     if (!Array.isArray(data)) return;
@@ -58,8 +59,8 @@ const Reviews = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchReviews(controller.signal).catch(() => {});
-    fetchProducts(controller.signal).catch(() => {});
+    fetchReviews(controller.signal).catch(() => { });
+    fetchProducts(controller.signal).catch(() => { });
     return () => controller.abort();
   }, []);
 
@@ -75,7 +76,7 @@ const Reviews = () => {
 
     try {
       const payload: any = { name: newReview.name, rating: newReview.rating, comment: newReview.comment, product: Number(newReview.productId) };
-      const res = await fetch('/api/reviews/', {
+      const res = await fetch(`${API_BASE}/api/reviews/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -99,9 +100,8 @@ const Reviews = () => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`h-4 w-4 ${
-          i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
-        }`}
+        className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+          }`}
         onClick={() => setNewReview({ ...newReview, rating: i + 1 })}
       />
     ));
@@ -139,7 +139,7 @@ const Reviews = () => {
                 </Button>
               )}
             </div>
-            
+
             {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => (
               <Card key={review.id} className="product-card">
                 <CardContent className="p-6">
@@ -152,18 +152,18 @@ const Reviews = () => {
                         <h4 className="font-semibold text-foreground">{review.name}</h4>
                         <span className="text-sm text-muted-foreground">{review.date}</span>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 mb-2">
                         <div className="flex">{renderStars(review.rating)}</div>
                         <span className="text-sm text-muted-foreground">
                           ({review.rating}/5)
                         </span>
                       </div>
-                      
+
                       <p className="text-sm text-primary font-medium mb-2">
                         {review.product}
                       </p>
-                      
+
                       <p className="text-muted-foreground leading-relaxed">
                         {review.comment}
                       </p>
@@ -239,11 +239,10 @@ const Reviews = () => {
                           className="hover:scale-110 transition-transform"
                         >
                           <Star
-                            className={`h-6 w-6 ${
-                              i < newReview.rating 
-                              ? 'text-yellow-400 fill-yellow-400' 
-                              : 'text-gray-300 hover:text-yellow-300'
-                            }`}
+                            className={`h-6 w-6 ${i < newReview.rating
+                                ? 'text-yellow-400 fill-yellow-400'
+                                : 'text-gray-300 hover:text-yellow-300'
+                              }`}
                           />
                         </button>
                       ))}
@@ -270,8 +269,8 @@ const Reviews = () => {
                     <div className="text-sm text-red-500">{errorMsg}</div>
                   )}
 
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={isSubmitting}
                     className="w-full btn-glow"
                   >

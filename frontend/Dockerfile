@@ -1,22 +1,21 @@
-FROM node:18-alpine AS build
-
+FROM node:20-alpine AS build
 WORKDIR /app
-
-RUN apk add --no-cache python3 make g++
-
+# Build-time config for Vite
+ARG VITE_API_ORIGIN
+ARG VITE_WS_ORIGIN
+ENV VITE_API_ORIGIN=${VITE_API_ORIGIN}
+ENV VITE_WS_ORIGIN=${VITE_WS_ORIGIN}
 COPY package*.json ./
-
-RUN npm cache clean --force
 RUN npm ci
-
 COPY . .
-
 RUN npm run build
 
-FROM nginx:alpine
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
-
+# Serve with Vite preview (no Nginx as requested)
+FROM node:20-alpine AS runtime
+WORKDIR /app
+RUN npm i -g serve
+COPY --from=build /app/dist /app/dist
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["sh", "-c", "serve -s /app/dist -l 80"]
+
+

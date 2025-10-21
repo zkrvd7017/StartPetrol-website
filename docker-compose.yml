@@ -1,25 +1,72 @@
 services:
   backend:
     build: ./backend
-    container_name: startpetrol_backend
+    container_name: startpetrol-backend
+    restart: unless-stopped
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - PYTHONUNBUFFERED=1
+      - DJANGO_DEBUG=0
+      - DJANGO_SECRET_KEY=startpetrol-super-secret-key-2025
+      - ALLOWED_HOSTS=51.21.222.146,localhost,127.0.0.1,0.0.0.0,*
+      - REDIS_URL=redis://redis:6379/0
+      - WEBCHAT_API_KEY="8292073084:AAGlXM2JW-y8kXU9XNYPJPrq-5lCFMOXdAY"
     ports:
-      - "8000:8000"
-    env_file:
-      - ./backend/.env
-    restart: always
+      - "10002:8000"
+    volumes:
+      - ./backend/staticfiles:/app/staticfiles
+      - ./backend/media:/app/media
+      - ./backend/db.sqlite3:/app/db.sqlite3
+    depends_on:
+      - redis
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 120"
+
+    networks:
+      - shared_network
 
   frontend:
-    build: ./frontend
-    container_name: startpetrol_frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_ORIGIN: "https://api.startpetrol.uz"
+        VITE_WS_ORIGIN: "wss://api.startpetrol.uz"
+    container_name: startpetrol-frontend
+    restart: unless-stopped
     ports:
-      - "3000:80"
+      - "10001:80"
+
     depends_on:
       - backend
-    restart: always
+
+    networks:
+      - shared_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: startpetrol-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 
   bot:
     build: ./bot
-    container_name: startpetrol_bot
-    env_file:
-      - ./bot/.env
-    restart: always
+    container_name: startpetrol-bot
+    restart: unless-stopped
+    environment:
+      - BACKEND_BASE_URL=http://backend:8000
+    depends_on:
+      - backend
+
+volumes:
+  redis_data:
+
+networks:
+  shared_network:
+    external: true
+
+

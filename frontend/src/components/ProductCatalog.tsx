@@ -61,6 +61,7 @@ const defaultProducts = [
 ];
 
 const ProductCatalog = () => {
+  const API_BASE = (import.meta as any).env?.VITE_API_ORIGIN || '';
   const { t } = useLanguage();
   const location = useLocation();
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
@@ -84,7 +85,7 @@ const ProductCatalog = () => {
     (async () => {
       try {
         setLoadFailed(false);
-        const res = await fetch('/api/products/', { signal: controller.signal });
+        const res = await fetch(`${API_BASE}/api/products/`, { signal: controller.signal });
         if (!res.ok) throw new Error('bad response');
         const data = await res.json();
         const mapped = (Array.isArray(data) ? data : []).map((p: any) => ({
@@ -215,20 +216,20 @@ const ProductGrid = ({ products, favorites, toggleFavorite, getTypeIcon, getQual
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
       {products.map((product: any, index: number) => (
-        <Card 
-          key={product.id} 
+        <Card
+          key={product.id}
           className="product-card group overflow-hidden border-0 shadow-card bg-gradient-card animate-scale-in h-full"
           style={{ animationDelay: `${index * 0.1}s` }}
         >
           <CardHeader className="p-0">
             <div className="relative overflow-hidden">
-              <img 
-                src={product.image} 
+              <img
+                src={product.image}
                 alt={product.name}
                 className="w-full h-32 sm:h-40 lg:h-48 object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              
+
               {/* Favorite Button */}
               <Button
                 variant="ghost"
@@ -236,12 +237,11 @@ const ProductGrid = ({ products, favorites, toggleFavorite, getTypeIcon, getQual
                 className="absolute top-2 right-2 sm:top-4 sm:right-4 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30"
                 onClick={() => toggleFavorite(product.id)}
               >
-                <Heart 
-                  className={`h-3 w-3 sm:h-4 sm:w-4 transition-all duration-300 ${
-                    favorites.has(product.id) 
-                      ? 'fill-red-500 text-red-500 animate-pulse' 
+                <Heart
+                  className={`h-3 w-3 sm:h-4 sm:w-4 transition-all duration-300 ${favorites.has(product.id)
+                      ? 'fill-red-500 text-red-500 animate-pulse'
                       : 'text-white hover:text-red-300'
-                  }`} 
+                    }`}
                 />
               </Button>
 
@@ -306,7 +306,7 @@ const ProductGrid = ({ products, favorites, toggleFavorite, getTypeIcon, getQual
               </div>
 
               {/* Action Button */}
-              
+
             </div>
           </CardContent>
         </Card>

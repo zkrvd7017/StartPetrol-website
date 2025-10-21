@@ -24,6 +24,8 @@ const getOrCreateUserId = (): string => {
 };
 
 const ChatWidget = () => {
+  const API_BASE = (import.meta as any).env?.VITE_API_ORIGIN || '';
+  const WS_ORIGIN = (import.meta as any).env?.VITE_WS_ORIGIN || '';
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'admin', content: "Salom! Savollaringizni yozing: narx, yetkazib berish, mahsulotlar va hokazo." }
@@ -44,7 +46,8 @@ const ChatWidget = () => {
   // WebSocket connect on session
   useEffect(() => {
     if (!sessionId) return;
-    const url = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + `/ws/webchat/${sessionId}/`;
+    const wsBase = WS_ORIGIN || ((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host);
+    const url = `${wsBase}/ws/webchat/${sessionId}/`;
     const ws = new WebSocket(url);
     wsRef.current = ws;
     ws.onmessage = (ev) => {
@@ -54,7 +57,7 @@ const ChatWidget = () => {
           setMessages((prev: ChatMessage[]) => ([...prev, { role: 'admin', content: String(data.content), created_at: data.created_at }]));
           if (data.created_at) setSince(data.created_at);
         }
-      } catch {}
+      } catch { }
     };
     ws.onclose = () => { wsRef.current = null; };
     return () => { ws.close(); };
@@ -65,9 +68,10 @@ const ChatWidget = () => {
     if (!sessionId) return;
     const poll = async () => {
       try {
-        const url = new URL(`/api/webchat/${sessionId}/poll/`, window.location.origin);
+        const base = API_BASE || window.location.origin;
+        const url = new URL(`/api/webchat/${sessionId}/poll/`, base);
         if (since) url.searchParams.set('since', since);
-        const res = await fetch(url.toString().replace(window.location.origin, ''));
+        const res = await fetch(url.toString());
         if (!res.ok) return;
         const data = await res.json();
         if (Array.isArray(data) && data.length) {
@@ -81,7 +85,7 @@ const ChatWidget = () => {
           const last = data[data.length - 1];
           if (last?.created_at) setSince(last.created_at);
         }
-      } catch {}
+      } catch { }
     };
     if (!wsRef.current) {
       poll();
@@ -97,7 +101,7 @@ const ChatWidget = () => {
     setInput('');
     setLoading(true);
     try {
-      const res = await fetch('/api/send-question', {
+      const res = await fetch(`${API_BASE}/api/send-question`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: text, user_id: userId, session_id: sessionId || undefined }),

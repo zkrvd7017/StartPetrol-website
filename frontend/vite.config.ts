@@ -7,19 +7,32 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8080,
+    port: Number(process.env.VITE_DEV_SERVER_PORT || 8080),
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        target: process.env.VITE_API_TARGET || process.env.VITE_API_ORIGIN || "http://localhost:8000",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, "/api"),
       },
       "/ws": {
-        target: "ws://localhost:8000",
+        target: process.env.VITE_WS_TARGET || process.env.VITE_WS_ORIGIN || "ws://localhost:8000",
         changeOrigin: true,
         ws: true,
       },
     },
+  },
+  preview: {
+    allowedHosts: [
+      "startpetrol.uz",
+      "www.startpetrol.uz",
+      "localhost",
+      "127.0.0.1",
+      "0.0.0.0",
+      "51.21.222.146"
+    ],
+    host: "0.0.0.0",
+    port: Number(process.env.VITE_DEV_SERVER_PORT || 80),
+    strictPort: true,
   },
   plugins: [
     react(),
